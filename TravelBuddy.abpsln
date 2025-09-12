@@ -1,0 +1,40 @@
+{
+  "id": "ab68cee1-9b2d-44cf-82fa-83f8fced5c16",
+  "template": "app",
+  "versions": {
+    "AbpFramework": "8.2.2",
+    "AbpStudio": "0.7.9"
+  },
+  "modules": {
+    "TravelBuddy": {
+      "path": "TravelBuddy.abpmdl"
+    }
+  },
+  "runProfiles": {
+    "Default": {
+      "path": "etc/abp-studio/run-profiles/Default.abprun.json"
+    }
+  },
+  "options": {
+    "httpRequests": {
+      "ignoredUrls": [
+        "^/metrics$"
+      ]
+    }
+  },
+  "creatingStudioConfiguration": {
+    "template": "app",
+    "createdAbpStudioVersion": "0.7.9",
+    "tiered": "false",
+    "uiFramework": "angular",
+    "databaseProvider": "ef",
+    "databaseManagementSystem": "sqlserver",
+    "separateTenantSchema": "false",
+    "theme": "leptonx-lite",
+    "themeStyle": "system",
+    "mobileFramework": "none",
+    "progressiveWebApp": "false",
+    "publicWebsite": "false",
+    "socialLogin": ""
+  }
+}
