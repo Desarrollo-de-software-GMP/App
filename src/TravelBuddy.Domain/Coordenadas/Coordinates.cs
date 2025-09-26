@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace TravelBuddy.Coordenadas
 {
-    public class Coordinates
+    public class Coordinates(float latitude, float longitude)
     {
-        public required float Latitude { get; set; }
-        public required float Longitude { get; set; }
+        public required float Latitude { get; set; } = latitude;
+        public required float Longitude { get; set; } = longitude;
 
-        public Coordinates(float latitude, float longitude)
-        {
-            Latitude = latitude;
-            Longitude = longitude;
-        }
+    } 
 
-    }
 }

@@ -13,7 +13,7 @@ namespace TravelBuddy.Destinations
         public required string Name { get; set; }
         public required string Country { get; set; }
         public required int Poblation { get; set; }
-        public required Coordinates Coordinates { get; set; }
+        public Coordinates Coordinates { get; set; }
         public string? PhotoUrl { get; set; }
         public DateTime LastUpdate { get; set; } = DateTime.Now;
 

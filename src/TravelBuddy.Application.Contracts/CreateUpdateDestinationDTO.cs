@@ -18,5 +18,10 @@ namespace TravelBuddy
 
         [Required]
         public int Poblation { get; set; }
+        [Required]
+        public string? PhotoUrl { get; set; }
+        [Required]
+        public DateTime LastUpdate { get; set; }
+        public CoordinatesDTO Coordinates { get; set; }
     }
 }
