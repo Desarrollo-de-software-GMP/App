@@ -14,6 +14,7 @@ using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using TravelBuddy.Destinations;
 
 namespace TravelBuddy.EntityFrameworkCore;
 
@@ -26,6 +27,7 @@ public class TravelBuddyDbContext :
     IIdentityDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<Destinations.Destination> Destinations { get; set; }
 
 
     #region Entities from the modules
@@ -78,7 +80,7 @@ public class TravelBuddyDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureTenantManagement();
         builder.ConfigureBlobStoring();
-        
+
         /* Configure your own tables/entities inside here */
 
         //builder.Entity<YourEntity>(b =>
@@ -87,5 +89,22 @@ public class TravelBuddyDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<Destination>(d => 
+        {
+            d.ToTable("Destinations");
+            d.ConfigureByConvention();
+            d.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            d.Property(x => x.Country).IsRequired().HasMaxLength(64);
+            d.Property(x => x.Poblation).IsRequired().HasMaxLength(64);
+
+            // Mapear Coordinates como Value Object usando OwnsOne
+            d.OwnsOne(x => x.Coordinates, coord =>
+            {
+                coord.Property(c => c.Latitude).HasColumnName("Latitude").IsRequired();
+                coord.Property(c => c.Longitude).HasColumnName("Longitude").IsRequired();
+            });
+
+        });
     }
 }
