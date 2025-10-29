@@ -1,5 +1,4 @@
 ﻿using System;
-using TravelBuddy.Destinations;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
