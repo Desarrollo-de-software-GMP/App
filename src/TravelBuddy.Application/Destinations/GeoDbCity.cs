@@ -1,4 +1,4 @@
-﻿namespace TravelBuddy.Destinations
+﻿namespace TravelBuddy.Application.Destinations
 {
     class GeoDbCity
     {

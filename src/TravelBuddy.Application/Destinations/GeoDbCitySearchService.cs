@@ -6,23 +6,34 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using TravelBuddy.Destinations;
+using TravelBuddy.Application.Destinations;
+
 namespace TravelBuddy.Destinations
 {
     public class GeoDbCitySearchService : ICitySearchService
     {
-        private static readonly string apiKey = "1b87288382msh04081de1250362fp1acf94jsn6c66e7e31d14";
+        private static readonly string apiKey = "79f71dea3bmsh428d736660ceb5ap159e4bjsn2d9cfc576041";
         private static readonly string baseUrl = "https://wft-geo-db.p.rapidapi.com/v1/geo";
+        private readonly HttpClient _httpClient;
+
+        public GeoDbCitySearchService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
 
         public async Task<CitySearchResultDto> SearchCities(CitySearchRequestDTO request)
         {
-            using var httpClient = new HttpClient();
-
-            httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Key", apiKey);
-            httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
+            if (string.IsNullOrWhiteSpace(request.PartialName))
+            {
+                return new CitySearchResultDto { Cities = new List<CityDto>() };
+            }
+            _httpClient.DefaultRequestHeaders.Clear(); 
+            _httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Key", apiKey);
+            _httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
 
             string url = $"{baseUrl}/cities?namePrefix={Uri.EscapeDataString(request.PartialName)}&limit=10&sort=population";
 
-            HttpResponseMessage response = await httpClient.GetAsync(url);
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
