@@ -1,4 +1,6 @@
 using AutoMapper;
+using TravelBuddy.Califications;
+using TravelBuddy.Califications.Dtos;
 using TravelBuddy.Coordenadas;
 using TravelBuddy.Destinations;
 
@@ -14,6 +16,9 @@ public class TravelBuddyApplicationAutoMapperProfile : Profile
             CreateMap<Destination, DestinationDTO>();
             CreateMap<CreateUpdateDestinationDTO, Destination>();
             CreateMap<Coordinates, CoordinatesDTO>().ReverseMap();
+
+            CreateMap<Calification, CalificationDto>();
+            CreateMap<CreateUpdateCalificationDTO, Calification>();
 
         }     
 
