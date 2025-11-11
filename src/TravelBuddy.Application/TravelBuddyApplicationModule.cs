@@ -1,10 +1,13 @@
-﻿using Volo.Abp.PermissionManagement;
-using Volo.Abp.SettingManagement;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http;
+using TravelBuddy.Destinations;
 using Volo.Abp.Account;
-using Volo.Abp.Identity;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
+using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
+using Volo.Abp.PermissionManagement;
+using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 
 namespace TravelBuddy;
@@ -27,5 +30,7 @@ public class TravelBuddyApplicationModule : AbpModule
         {
             options.AddMaps<TravelBuddyApplicationModule>();
         });
+        context.Services.AddTransient<ICitySearchService, GeoDbCitySearchService>();
+        context.Services.AddSingleton<HttpClient>();
     }
 }
