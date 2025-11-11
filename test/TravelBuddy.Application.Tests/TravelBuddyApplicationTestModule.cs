@@ -1,4 +1,6 @@
-﻿using Volo.Abp.Modularity;
+﻿using System.Net.Http; 
+using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.Modularity;
 
 namespace TravelBuddy;
 
@@ -8,5 +10,10 @@ namespace TravelBuddy;
 )]
 public class TravelBuddyApplicationTestModule : AbpModule
 {
-
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        // Registra una instancia simple de HttpClient para que
+        // la inyección de dependencias funcione en los tests.
+        context.Services.AddSingleton<HttpClient>();
+    }
 }

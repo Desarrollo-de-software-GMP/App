@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TravelBuddy.Destinations
+namespace TravelBuddy.Application.Destinations
 {
     class GeoDbResponse
     {
