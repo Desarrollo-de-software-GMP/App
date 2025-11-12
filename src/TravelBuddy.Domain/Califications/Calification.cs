@@ -15,7 +15,7 @@ namespace TravelBuddy.Califications
         public string? comment { get; set; }
 
 
-        private Calification()
+        public Calification()
         {
         }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
+using TravelBuddy.Califications; 
 using TravelBuddy.Destinations;
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
@@ -30,7 +31,10 @@ public class TravelBuddyApplicationModule : AbpModule
         {
             options.AddMaps<TravelBuddyApplicationModule>();
         });
+
         context.Services.AddTransient<ICitySearchService, GeoDbCitySearchService>();
-        context.Services.AddSingleton<HttpClient>();
+        context.Services.AddTransient<ICreateUpdateCalificationAppService, CreateUpdateCalificationService>();
+
+        context.Services.AddHttpClient();
     }
 }
