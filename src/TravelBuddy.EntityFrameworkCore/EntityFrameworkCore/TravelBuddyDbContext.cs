@@ -15,6 +15,7 @@ using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using TravelBuddy.Destinations;
+using TravelBuddy.Califications;
 
 namespace TravelBuddy.EntityFrameworkCore;
 
@@ -28,6 +29,7 @@ public class TravelBuddyDbContext :
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Destinations.Destination> Destinations { get; set; }
+    public DbSet<Califications.Calification> Califications { get; set; }
 
 
     #region Entities from the modules
@@ -105,6 +107,13 @@ public class TravelBuddyDbContext :
                 coord.Property(c => c.Longitude).HasColumnName("Longitude").IsRequired();
             });
 
+        });
+        builder.Entity<Calification>(c =>
+        {
+            c.ToTable("Califications");
+            c.ConfigureByConvention();
+            c.Property(x => x.punctuation).IsRequired();
+            c.Property(x => x.comment).HasMaxLength(512);
         });
     }
 }
