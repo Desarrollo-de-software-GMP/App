@@ -35,6 +35,7 @@ public class Program
                         .WriteTo.Async(c => c.AbpStudio(services));
                 });
             await builder.AddApplicationAsync<TravelBuddyHttpApiHostModule>();
+
             var app = builder.Build();
             await app.InitializeApplicationAsync();
             await app.RunAsync();

@@ -173,18 +173,44 @@ public class TravelBuddyHttpApiHostModule : AbpModule
 
     private static void ConfigureSwagger(ServiceConfigurationContext context, IConfiguration configuration)
     {
-        context.Services.AddAbpSwaggerGenWithOidc(
-            configuration["AuthServer:Authority"]!,
-            ["TravelBuddy"],
-            [AbpSwaggerOidcFlows.AuthorizationCode],
-            null,
-            options =>
+        context.Services.AddAbpSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "TravelBuddy API", Version = "v1" });
-                options.DocInclusionPredicate((docName, description) => true);
-                options.CustomSchemaIds(type => type.FullName);
+                Title = "TravelBuddy API",
+                Version = "v1"
             });
+
+            options.DocInclusionPredicate((docName, description) => true);
+            options.CustomSchemaIds(type => type.FullName);
+
+            // Definición de seguridad para JWT Bearer
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "Ingrese el token JWT en el formato: Bearer {token}",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+        });
     }
+
 
     private void ConfigureCors(ServiceConfigurationContext context, IConfiguration configuration)
     {

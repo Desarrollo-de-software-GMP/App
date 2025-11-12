@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -29,11 +30,17 @@ class Program
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .AddAppSettingsSecretsJson()
-            .ConfigureLogging((context, logging) => logging.ClearProviders())
-            .ConfigureServices((hostContext, services) =>
-            {
-                services.AddHostedService<DbMigratorHostedService>();
-            });
+    Host.CreateDefaultBuilder(args)
+        .ConfigureAppConfiguration((context, config) =>
+        {
+            config.AddJsonFile("src/TravelBuddy.DbMigrator/appsettings.json", optional: false, reloadOnChange: true);
+            config.AddJsonFile("appsettings.secrets.json", optional: true, reloadOnChange: true);
+        })
+        .AddAppSettingsSecretsJson()
+        .ConfigureLogging((context, logging) => logging.ClearProviders())
+        .ConfigureServices((hostContext, services) =>
+        {
+            services.AddHostedService<DbMigratorHostedService>();
+        });
+
 }
