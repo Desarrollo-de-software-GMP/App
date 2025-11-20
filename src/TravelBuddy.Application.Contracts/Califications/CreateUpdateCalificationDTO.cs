@@ -11,7 +11,7 @@ namespace TravelBuddy.Califications.Dtos
         public int punctuation { get; set; }
 
         [StringLength(1000)] 
-        public string? comment { get; set; }
+        public string comment { get; set; }
 
         [Required]
         public Guid DestinationId { get; set; }

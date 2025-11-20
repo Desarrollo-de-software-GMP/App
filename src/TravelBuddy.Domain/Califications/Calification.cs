@@ -1,8 +1,8 @@
 ﻿using System;
 using TravelBuddy.Common;
-using Volo.Abp; // <-- Necesario para IUserOwned
+using Volo.Abp; 
 using Volo.Abp.Domain.Entities.Auditing;
-// Quita 'using TravelBuddy.Common;' si 'IUserOwned' no está definido allí
+
 
 namespace TravelBuddy.Califications
 {
@@ -12,7 +12,7 @@ namespace TravelBuddy.Califications
         public required int punctuation { get; set; }
         public Guid UserId { get; set; }        // Requerido por IUserOwned
         public Guid DestinationId { get; set; }
-        public string? comment { get; set; }
+        public string comment { get; set; }
 
 
         public Calification()

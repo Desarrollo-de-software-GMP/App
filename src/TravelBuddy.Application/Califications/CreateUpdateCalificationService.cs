@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TravelBuddy.Califications.Dtos;
-using TravelBuddy.Califications; // Para la entidad Calification
+using TravelBuddy.Califications; 
 using Volo.Abp;
 using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Repositories;
@@ -9,8 +9,7 @@ using Volo.Abp.Users;
 
 namespace TravelBuddy.Califications
 {
-    // NO hereda de ApplicationService ni ITransientDependency
-    // Implementa la interfaz que definimos
+
     public class CreateUpdateCalificationService : ICreateUpdateCalificationAppService
     {
         private readonly IRepository<Calification, Guid> _calificationRepository;
@@ -40,22 +39,20 @@ namespace TravelBuddy.Califications
             if (calificacionExistente != null)
                 throw new UserFriendlyException("Ya has calificado este destino.");
 
-            // Creamos la entidad y asignamos propiedades manualmente
-            // (Usamos el constructor vacío que requiere EF Core)
+        
             var calificacion = new Calification()
             {
                 punctuation = input.punctuation,
                 comment = input.comment,
                 DestinationId = input.DestinationId,
                 UserId = userId
-                // Nota: El 'Id' y las fechas de auditoría (CreationTime, etc.)
-                // se asignan automáticamente por ABP/EF Core.
+                
             };
 
             // Guardar en la BD
             await _calificationRepository.InsertAsync(calificacion, autoSave: true);
 
-            // Mapeo MANUAL al DTO de respuesta (como en tu ejemplo)
+            // Mapeo MANUAL al DTO de respuesta 
             return new CalificationDTO
             {
                 Id = calificacion.Id,
@@ -63,7 +60,7 @@ namespace TravelBuddy.Califications
                 DestinationId = calificacion.DestinationId,
                 punctuation = calificacion.punctuation,
                 comment = calificacion.comment,
-                CreationTime = calificacion.CreationTime // <-- Propiedad de AuditedAggregateRoot
+                CreationTime = calificacion.CreationTime 
             };
         }
     }

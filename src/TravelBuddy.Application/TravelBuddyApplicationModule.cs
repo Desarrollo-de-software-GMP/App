@@ -33,8 +33,8 @@ public class TravelBuddyApplicationModule : AbpModule
         });
 
         context.Services.AddTransient<ICitySearchService, GeoDbCitySearchService>();
+        context.Services.AddSingleton<HttpClient>();
         context.Services.AddTransient<ICreateUpdateCalificationAppService, CreateUpdateCalificationService>();
 
-        context.Services.AddHttpClient();
     }
 }
