@@ -28,7 +28,7 @@ public class TravelBuddyDbContext :
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Destinations.Destination> Destinations { get; set; }
-
+    public DbSet<Califications.Calification> Califications { get; set; }
 
     #region Entities from the modules
 
