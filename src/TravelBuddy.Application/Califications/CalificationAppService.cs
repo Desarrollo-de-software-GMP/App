@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using OpenIddict.Validation.AspNetCore;
+//using OpenIddict.Validation.AspNetCore;
 using TravelBuddy.Califications.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
@@ -13,7 +13,7 @@ using Volo.Abp.Users;
 namespace TravelBuddy.Califications
 {
     
-    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [Authorize]//(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)
     public class CalificationAppService : ApplicationService, ICalificationAppService
     {
         // 2. Inyecta el Repositorio para 'Calificacion' y el 'CurrentUser'
