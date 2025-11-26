@@ -23,6 +23,7 @@ public abstract class TravelBuddyTestBase<TStartupModule> : AbpIntegratedTest<TS
         builder.AddJsonFile("appsettings.json", false);
         builder.AddJsonFile("appsettings.secrets.json", true);
         services.ReplaceConfiguration(builder.Build());
+
     }
 
     protected virtual Task WithUnitOfWorkAsync(Func<Task> func)
