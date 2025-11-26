@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TravelBuddy.Califications.Dtos;
-using TravelBuddy.Domain; // Para la entidad Calificacion
+// using TravelBuddy.Domain; // Para la entidad Calificacion
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
