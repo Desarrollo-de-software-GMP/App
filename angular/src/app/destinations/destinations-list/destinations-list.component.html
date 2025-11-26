@@ -1,1 +1,151 @@
-<p>destinations-list works!</p>
+<div class="container-fluid fade-in-top">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-transparent py-3">
+      <h3 class="card-title m-0 text-primary">
+        <i class="fa fa-map-marked-alt me-2"></i>
+        {{ '::Menu:Destinations' | abpLocalization }}
+      </h3>
+    </div>
+
+    <div class="card-body">
+      <!-- Filtros de Búsqueda -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-5">
+          <label class="form-label text-muted small fw-bold">{{ '::Destinations:SearchQuery' | abpLocalization }}</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="fa fa-search text-muted"></i></span>
+            <input
+              type="text"
+              class="form-control border-start-0 ps-0 bg-light"
+              [(ngModel)]="searchParams.query"
+              (keyup.enter)="onSearch()"
+              [placeholder]="'::Destinations:SearchPlaceholder' | abpLocalization"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label text-muted small fw-bold">{{ '::Destinations:Country' | abpLocalization }}</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="fa fa-globe text-muted"></i></span>
+            <input
+              type="text"
+              class="form-control border-start-0 ps-0 bg-light"
+              [(ngModel)]="searchParams.country"
+              (keyup.enter)="onSearch()"
+              [placeholder]="'::Destinations:CountryPlaceholder' | abpLocalization"
+            />
+          </div>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end gap-2">
+          <button type="button" class="btn btn-primary w-100 shadow-sm" (click)="onSearch()">
+            {{ '::Search' | abpLocalization }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="clearSearch()" title="Limpiar">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Spinner de Carga -->
+      <div *ngIf="loading" class="text-center my-5 py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Grid de Resultados -->
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" *ngIf="!loading && destinations.length > 0">
+        <div class="col" *ngFor="let destination of destinations">
+          <div class="card h-100 border-0 shadow-sm destination-card overflow-hidden">
+            <!-- Imagen -->
+            <div class="position-relative">
+              <img
+                [src]="getDestinationImage($any(destination).imageUrl)"
+                class="card-img-top destination-image"
+                [alt]="destination.name"
+                (error)="onImageError($event)"
+              />
+              <span class="badge bg-primary position-absolute top-0 end-0 m-3 shadow-sm">
+                {{ destination.country }}
+              </span>
+            </div>
+
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title fw-bold mb-3 text-dark">{{ destination.name }}</h5>
+
+              <!-- Datos informativos -->
+              <div class="d-flex align-items-center mb-2 text-muted small">
+                <i class="fa fa-users me-2 opacity-50 width-20"></i>
+                <span>{{ formatPopulation($any(destination).population) }} hab.</span>
+              </div>
+
+              <div class="d-flex align-items-center mb-3 text-muted small">
+                <i class="fa fa-map-pin me-2 opacity-50 width-20"></i>
+                <span>{{ formatCoordinates($any(destination).latitude, $any(destination).longitude) }}</span>
+              </div>
+
+              <!-- Botones de Acción -->
+              <div class="d-flex gap-2 mt-auto align-items-center">
+                <button
+                  class="btn btn-outline-primary flex-grow-1 btn-sm"
+                  (click)="openInMaps(destination)"
+                  [title]="'::Destinations:ViewOnMap' | abpLocalization"
+                >
+                  <i class="fa fa-external-link-alt me-2"></i>
+                  {{ '::Destinations:ViewOnMap' | abpLocalization }}
+                </button>
+                
+                <!-- Botón Agregar a BD: Se oculta si es fuente local O si ya existe en la BD (duplicado) -->
+                <button
+                  *ngIf="!isLocalSource && !isDuplicate(destination)"
+                  class="btn btn-success btn-sm px-3"
+                  (click)="addToDatabase(destination)"
+                  title="Guardar en mis destinos"
+                >
+                  <i class="fa fa-plus"></i>
+                </button>
+
+                <!-- Indicador visual opcional cuando ya existe -->
+                <button 
+                  *ngIf="!isLocalSource && isDuplicate(destination)" 
+                  class="btn btn-light btn-sm px-3 disabled border-0"
+                  title="Este destino ya está en tu lista"
+                >
+                  <i class="fa fa-check text-success"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado Vacío (No resultados) -->
+      <div *ngIf="!loading && destinations.length === 0" class="text-center py-5">
+        <div class="mb-3 text-muted opacity-25">
+          <i class="fa fa-search fa-4x"></i>
+        </div>
+        <h4 class="text-muted">{{ '::Destinations:NoResults' | abpLocalization }}</h4>
+        <p class="text-muted small">Intenta ajustar tus filtros de búsqueda.</p>
+        <button class="btn btn-link text-decoration-none" (click)="clearSearch()">
+          {{ '::Destinations:ShowAll' | abpLocalization }}
+        </button>
+      </div>
+
+      <!-- Paginación -->
+      <div class="d-flex justify-content-center mt-5" *ngIf="totalCount > 0">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="searchParams.maxResultCount"
+          [collectionSize]="totalCount"
+          [maxSize]="5"
+          [boundaryLinks]="true"
+          (pageChange)="onPageChange($event)"
+          class="shadow-sm"
+        ></ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>

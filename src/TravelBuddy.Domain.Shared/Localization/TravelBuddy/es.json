@@ -38,6 +38,12 @@
     "Unspecified": "Sistema",
     "SeeAllUsers": "Ver todos los usuarios",
     "TakePhoto": "Tomar foto",
-    "ChoosePhoto": "Escoge una foto"
+    "ChoosePhoto": "Escoge una foto",
+    "Destinations:SearchQuery": "Nombre del destino",
+    "Destinations:Country": "País del destino",
+    "Destinations:ViewOnMap": "Ver en Google Maps",
+    "Destinations:SearchPlaceholder": "Buenos Aires",
+    "Destinations:CountryPlaceholder": "Argentina"
+
   }
 }
