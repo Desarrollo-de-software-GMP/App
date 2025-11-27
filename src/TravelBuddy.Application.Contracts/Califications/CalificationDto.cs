@@ -5,9 +5,9 @@ namespace TravelBuddy.Califications
 {
     public class CalificationDto : AuditedEntityDto<Guid>
     {
-        public int puntuation { get; set; }
+        public int punctuation { get; set; }
         public string? comment { get; set; }
         public Guid UserId { get; set; }
-        public Guid DestinoId { get; set; } 
+        public Guid DestinationId { get; set; } 
     }
 }

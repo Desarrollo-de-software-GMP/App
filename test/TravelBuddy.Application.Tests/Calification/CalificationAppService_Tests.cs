@@ -1,6 +1,6 @@
-ï»¿using Shouldly;
+using NSubstitute;
+using Shouldly;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using TravelBuddy.Califications.Dtos;
 using TravelBuddy.Coordenadas;
@@ -10,25 +10,23 @@ using Volo.Abp;
 using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Modularity;
-using Volo.Abp.Security.Claims;
 using Volo.Abp.Users;
 using Xunit;
 
 namespace TravelBuddy.Califications
 {
-    public class CalificationAppService_Tests : TravelBuddyApplicationTestBase<TravelBuddyApplicationTestModule>
+    
+    [Collection(TravelBuddyTestConsts.CollectionDefinitionName)]
+    public abstract class CalificationAppService_Tests<TStartupModule> : TravelBuddyApplicationTestBase<TStartupModule>
+        where TStartupModule : IAbpModule
     {
         private readonly ICalificationAppService _calificationService;
         private readonly IRepository<Destination, Guid> _destinationRepository;
-        private readonly ICurrentPrincipalAccessor _currentPrincipalAccessor;
-        private readonly ICurrentUser _currentUser;
 
-        public CalificationAppService_Tests()
+        protected CalificationAppService_Tests()
         {
             _calificationService = GetRequiredService<ICalificationAppService>();
             _destinationRepository = GetRequiredService<IRepository<Destination, Guid>>();
-            _currentPrincipalAccessor = GetRequiredService<ICurrentPrincipalAccessor>();
-            _currentUser = GetRequiredService<ICurrentUser>();
         }
 
         [Fact]
@@ -49,9 +47,9 @@ namespace TravelBuddy.Califications
             // Assert
             result.ShouldNotBeNull();
             result.Id.ShouldNotBe(Guid.Empty);
-            result.DestinoId.ShouldBe(input.DestinationId);
-            result.puntuation.ShouldBe(input.punctuation);
-            result.puntuation.ShouldBeInRange(1, 5);
+            result.DestinationId.ShouldBe(input.DestinationId);
+            result.punctuation.ShouldBe(input.punctuation);
+            result.punctuation.ShouldBeInRange(1, 5);
             result.comment.ShouldBe(input.comment);
         }
 
@@ -64,14 +62,14 @@ namespace TravelBuddy.Califications
             {
                 DestinationId = destination.Id,
                 punctuation = 4,
-                comment = "lindo lugar"
+                comment = "Lindo lugar"
             };
 
-            // Creamos la primera opiniÃ³n
+            // Creamos la primera vez
             await _calificationService.CreateAsync(input);
 
             // Act & Assert
-            // Intentamos crear la segunda (debe fallar)
+            // Intentamos crear la segunda vez (debe fallar)
             var ex = await Assert.ThrowsAsync<UserFriendlyException>(async () =>
                 await _calificationService.CreateAsync(input)
             );
@@ -82,35 +80,42 @@ namespace TravelBuddy.Califications
         [Fact]
         public async Task Debe_RespetarFiltroPorUsuario_Y_RequerirAutenticacion()
         {
-            // Requisito 1: Requerir AutenticaciÃ³n (se verifica al inicio, por defecto somos admin)
-            _currentUser.IsAuthenticated.ShouldBeTrue();
+            // 1. Obtener el Mock de Usuario del contenedor
+            var currentUser = GetRequiredService<ICurrentUser>();
+
+            // Verificar autenticación inicial (dada por el Mock en TestBaseModule)
+            currentUser.IsAuthenticated.ShouldBeTrue();
 
             var destination = await CreateDestinationAsync();
             var input = new CreateUpdateCalificationDTO
             {
                 DestinationId = destination.Id,
                 punctuation = 3,
-                comment = "Bien."
+                comment = "Bueno."
             };
 
-            var opinion = await _calificationService.CreateAsync(input);
+            var calification = await _calificationService.CreateAsync(input);
 
-            // Requisito 2: Respetar Filtro por Usuario (El usuario solo ve su propia opiniÃ³n)
-            var currentUserId = _currentUser.Id.Value;
+            // 2. Verificar filtro por usuario
+            // Solo debe devolver las calificaciones creadas por ESTE usuario mockeado
+            var currentUserId = currentUser.Id.Value;
             var calificacionesUsuario = await _calificationService.ObtenerPorUsuarioAsync(currentUserId);
 
-            calificacionesUsuario.ShouldContain(o => o.Id == opinion.Id);
+            calificacionesUsuario.ShouldContain(o => o.Id == calification.Id);
 
-            // ðŸ”¸ Simular un contexto sin autenticaciÃ³n (Logout)
-            using (_currentPrincipalAccessor.Change(null))
-            {
-                _currentUser.IsAuthenticated.ShouldBeFalse();
+            // 3. Simular contexto SIN autenticación
+            // Al usar NSubstitute, cambiamos el comportamiento del mock dinámicamente
+            currentUser.IsAuthenticated.Returns(false);
+            currentUser.Id.Returns((Guid?)null);
 
-                // Verificar que al intentar obtener datos sin autenticaciÃ³n, falla
-                await Assert.ThrowsAsync<AbpAuthorizationException>(async () =>
-                    await _calificationService.ObtenerPorUsuarioAsync(Guid.NewGuid())
-                );
-            }
+            // Verificar que falla si no hay usuario autenticado
+            await Should.ThrowAsync<AbpAuthorizationException>(async () =>
+                await _calificationService.ObtenerPorUsuarioAsync(Guid.NewGuid())
+            );
+
+            // Restaurar estado del Mock (Importante para otros tests en la misma colección)
+            currentUser.IsAuthenticated.Returns(true);
+            currentUser.Id.Returns(Guid.NewGuid());
         }
 
         [Fact]
@@ -121,22 +126,25 @@ namespace TravelBuddy.Califications
             {
                 DestinationId = destination.Id,
                 punctuation = 2,
-                comment = "mmm."
+                comment = "No me gustó."
             };
 
-            // Simular contexto sin autenticaciÃ³n
-            using (_currentPrincipalAccessor.Change(null))
-            {
-                _currentUser.IsAuthenticated.ShouldBeFalse();
+            // Simular Logout
+            var currentUser = GetRequiredService<ICurrentUser>();
+            currentUser.IsAuthenticated.Returns(false);
+            currentUser.Id.Returns((Guid?)null);
 
-                // Debe fallar con excepciÃ³n de autorizaciÃ³n
-                await Assert.ThrowsAsync<AbpAuthorizationException>(async () =>
-                    await _calificationService.CreateAsync(input)
-                );
-            }
+            // Debe lanzar excepción de autorización
+            await Should.ThrowAsync<AbpAuthorizationException>(async () =>
+                await _calificationService.CreateAsync(input)
+            );
+
+            // Restaurar estado
+            currentUser.IsAuthenticated.Returns(true);
+            currentUser.Id.Returns(Guid.NewGuid());
         }
 
-        // Helper privado para crear datos necesarios
+        // Helper para crear datos de prueba en la BD en memoria
         private async Task<Destination> CreateDestinationAsync()
         {
             var destination = new Destination(

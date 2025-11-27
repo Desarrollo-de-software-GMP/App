@@ -27,12 +27,13 @@ public class TravelBuddyTestBaseModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+
         Configure<AbpBackgroundJobOptions>(options =>
         {
             options.IsJobExecutionEnabled = false;
         });
 
-        
+
         var currentUserMock = Substitute.For<ICurrentUser>();
         currentUserMock.IsAuthenticated.Returns(true);
         currentUserMock.Id.Returns(Guid.NewGuid());
@@ -40,14 +41,10 @@ public class TravelBuddyTestBaseModule : AbpModule
 
         context.Services.AddAlwaysAllowAuthorization();
 
-   
-
-        // Store
         var storeMock = Substitute.For<IDynamicPermissionDefinitionStore>();
         storeMock.GetGroupsAsync().ReturnsForAnyArgs(Task.FromResult((IReadOnlyList<PermissionGroupDefinition>)new List<PermissionGroupDefinition>()));
         context.Services.Replace(ServiceDescriptor.Singleton(storeMock));
 
-        // Repositorios
         var groupRepoMock = Substitute.For<IPermissionGroupDefinitionRecordRepository>();
         groupRepoMock.GetListAsync().ReturnsForAnyArgs(Task.FromResult(new List<PermissionGroupDefinitionRecord>()));
         context.Services.Replace(ServiceDescriptor.Singleton(groupRepoMock));
