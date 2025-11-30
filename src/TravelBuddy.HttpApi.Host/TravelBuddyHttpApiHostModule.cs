@@ -288,7 +288,9 @@ public class TravelBuddyHttpApiHostModule : AbpModule
         }
 
         app.UseRouting();
+        app.UseStaticFiles();
 
+        app.UseAbpStudioLink();
         // <-- MÉTODO CORREGIDO Y FUNCIONAL GRACIAS AL DEPENDENCY CHECK -->
         //app.MapAbpStaticAssets();
 
