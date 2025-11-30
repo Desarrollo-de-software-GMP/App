@@ -17,7 +17,7 @@ namespace TravelBuddy.Califications
 {
     
     [Collection(TravelBuddyTestConsts.CollectionDefinitionName)]
-    public abstract class CalificationAppService_Tests<TStartupModule> : TravelBuddyApplicationTestBase<TStartupModule>
+    public class CalificationAppService_Tests<TStartupModule> : TravelBuddyApplicationTestBase<TStartupModule>
         where TStartupModule : IAbpModule
     {
         private readonly ICalificationAppService _calificationService;
