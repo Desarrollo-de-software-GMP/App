@@ -26,14 +26,13 @@ namespace TravelBuddy.EntityFrameworkCore;
     typeof(AbpFeatureManagementEntityFrameworkCoreModule),
     typeof(AbpIdentityEntityFrameworkCoreModule),
     typeof(AbpOpenIddictEntityFrameworkCoreModule),
-    typeof(AbpTenantManagementEntityFrameworkCoreModule),
+    typeof(AbpTenantManagementEntityFrameworkCoreModule), 
     typeof(BlobStoringDatabaseEntityFrameworkCoreModule)
     )]
 public class TravelBuddyEntityFrameworkCoreModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
-
         TravelBuddyEfCoreEntityExtensionMappings.Configure();
     }
 
@@ -41,17 +40,16 @@ public class TravelBuddyEntityFrameworkCoreModule : AbpModule
     {
         context.Services.AddAbpDbContext<TravelBuddyDbContext>(options =>
         {
-                /* Remove "includeAllEntities: true" to create
-                 * default repositories only for aggregate roots */
+            /* Remove "includeAllEntities: true" to create
+             * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
         });
 
         Configure<AbpDbContextOptions>(options =>
         {
-                /* The main point to change your DBMS.
-                 * See also TravelBuddyDbContextFactory for EF Core tooling. */
+            /* The main point to change your DBMS.
+             * See also TravelBuddyDbContextFactory for EF Core tooling. */
             options.UseSqlServer();
         });
-        
     }
 }

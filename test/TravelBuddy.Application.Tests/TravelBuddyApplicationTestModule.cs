@@ -12,8 +12,7 @@ public class TravelBuddyApplicationTestModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        // Registra una instancia simple de HttpClient para que
-        // la inyección de dependencias funcione en los tests.
+        
         context.Services.AddSingleton<HttpClient>();
     }
 }
