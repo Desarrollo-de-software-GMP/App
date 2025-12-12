@@ -3,12 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions; // Necesario para Replace/TryAdd
 using Volo.Abp;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Sqlite;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
+using Volo.Abp.PermissionManagement.EntityFrameworkCore; // Importante
 using Volo.Abp.Uow;
 
 namespace TravelBuddy.EntityFrameworkCore;
@@ -29,15 +31,23 @@ public class TravelBuddyEntityFrameworkCoreTestModule : AbpModule
             options.SaveStaticFeaturesToDatabase = false;
             options.IsDynamicFeatureStoreEnabled = false;
         });
+
         Configure<PermissionManagementOptions>(options =>
         {
             options.SaveStaticPermissionsToDatabase = false;
             options.IsDynamicPermissionStoreEnabled = false;
         });
+
         context.Services.AddAlwaysDisableUnitOfWorkTransaction();
 
-        ConfigureInMemorySqlite(context.Services);
+        // --- SOLUCIÓN: Registro MANUAL de los repositorios de permisos ---
+        // Esto conecta la interfaz (lo que busca el constructor) con la implementación real de EF Core.
+        context.Services.Replace(ServiceDescriptor.Transient<IPermissionGroupDefinitionRecordRepository, EfCorePermissionGroupDefinitionRecordRepository>());
+        context.Services.Replace(ServiceDescriptor.Transient<IPermissionDefinitionRecordRepository, EfCorePermissionDefinitionRecordRepository>());
+        context.Services.Replace(ServiceDescriptor.Transient<IPermissionGrantRepository, EfCorePermissionGrantRepository>());
+        // -----------------------------------------------------------------
 
+        ConfigureInMemorySqlite(context.Services);
     }
 
     private void ConfigureInMemorySqlite(IServiceCollection services)

@@ -2,6 +2,7 @@ using AutoMapper;
 using TravelBuddy.Califications;
 using TravelBuddy.Califications.Dtos;
 using TravelBuddy.Coordenadas;
+using TravelBuddy.Coordenadas.TravelBuddy.Coordenadas;
 using TravelBuddy.Destinations;
 
 namespace TravelBuddy;

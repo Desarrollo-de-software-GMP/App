@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Domain.Entities.Auditing;
+using System.Diagnostics.CodeAnalysis; 
 using TravelBuddy.Coordenadas;
+using TravelBuddy.Coordenadas.TravelBuddy.Coordenadas;
+using Volo.Abp.Domain.Entities.Auditing;
 
 namespace TravelBuddy.Destinations
 {
@@ -19,6 +17,8 @@ namespace TravelBuddy.Destinations
 
         public Destination() { }
 
+        // Agrega este atributo [SetsRequiredMembers]
+        [SetsRequiredMembers]
         public Destination(Guid id, string name, string country, int poblation, Coordinates coordinates, string photoURL, DateTime lastUpdate) : base(id)
         {
             this.Name = name;
@@ -27,9 +27,6 @@ namespace TravelBuddy.Destinations
             this.Coordinates = coordinates;
             this.PhotoUrl = photoURL;
             this.LastUpdate = lastUpdate;
-
         }
-
-
     }
 }
