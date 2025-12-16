@@ -11,9 +11,11 @@ using Volo.Abp.Users;
 
 namespace TravelBuddy.Califications
 {
-    [Authorize]
+    
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public class CalificationAppService : ApplicationService, ICalificationAppService
     {
+        // 2. Inyecta el Repositorio para 'Calificacion' y el 'CurrentUser'
         private readonly IRepository<Calification, Guid> _calificacionRepository;
         private readonly ICurrentUser _currentUser;
 
